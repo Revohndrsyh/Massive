@@ -6,6 +6,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/kuisioner', function () {
+    return view('kuisioner');
+})->name('kuisioner.index');
+
 // authentication pages
 Route::get('login', [\App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);

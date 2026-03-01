@@ -29,7 +29,7 @@
                     <a class="nav-link text-dark fw-medium" href="#">Dashbord</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark fw-medium" href="#">Kuisioner</a>
+                    <a class="nav-link text-dark fw-medium" href="{{ route('kuisioner.index') }}">Kuisioner</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark fw-medium" href="#">Modul</a>
