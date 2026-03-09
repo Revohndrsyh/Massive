@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-slate-50 text-slate-800 antialiased">
-    <nav class="navbar navbar-expand-lg bg-white border-bottom py-3">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom py-3 sticky-top shadow-sm">
         <div class="container-fluid px-4 px-lg-5">
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <i class="bi bi-soundwave text-primary fs-4 me-2"></i>
@@ -100,6 +100,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mt-4">
+                        <label for="opini_a" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian A</label>
+                        <textarea name="opini_a" id="opini_a" placeholder="Berikan tanggapan pribadi Anda terkait Operasional & Produk" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
+                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -144,6 +148,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mt-4">
+                        <label for="opini_b" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian B</label>
+                        <textarea name="opini_b" id="opini_b" placeholder="Berikan tanggapan pribadi Anda terkait Pemasaran & Hubungan Pelanggan" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
+                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -181,6 +189,10 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4">
+                        <label for="opini_c" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian C</label>
+                        <textarea name="opini_c" id="opini_c" placeholder="Berikan tanggapan pribadi Anda terkait Keuangan & Akses Modal" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
                     </div>
                 </section>
 
@@ -220,6 +232,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="mt-4">
+                        <label for="opini_d" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian D</label>
+                        <textarea name="opini_d" id="opini_d" placeholder="Berikan tanggapan pribadi Anda terkait Teknologi dan Digitalisasi" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
+                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -258,15 +274,14 @@
                             </tbody>
                         </table>
                     </div>
-                </section>
-
-                <section class="mt-8 border-t border-slate-200 pt-7">
-                    <h3 class="mb-4 text-2xl font-extrabold text-slate-800">Isi Opini Pribadi</h3>
-                    <textarea name="opini_pribadi" placeholder="Berikan Tanggapan Pribadi anda" class="min-h-[220px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
+                    <div class="mt-4">
+                        <label for="opini_e" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian E</label>
+                        <textarea name="opini_e" id="opini_e" placeholder="Berikan tanggapan pribadi Anda terkait Tantangan & Kebutuhan UMKM" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
+                    </div>
                 </section>
 
                 <div class="mt-8 border-t border-slate-200 pt-5 text-right">
-                    <button type="submit" class="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700">Kirim</button>
+                    <button type="submit" class="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700" style="border-radius: 50px;">Kirim</button>
                 </div>
             </form>
         </div>

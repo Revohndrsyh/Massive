@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
-<nav class="navbar navbar-expand-lg bg-white border-bottom py-3">
+<nav class="navbar navbar-expand-lg bg-white border-bottom py-3 sticky-top shadow-sm">
     <div class="container-fluid px-4 px-lg-5">
 
         <a class="navbar-brand d-flex align-items-center" href="#">
