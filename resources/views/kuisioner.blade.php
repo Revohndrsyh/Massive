@@ -64,7 +64,7 @@
                         <table class="min-w-full border-collapse text-sm">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Aspek Bisnis</th>
+                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Opini Bisnis</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">1</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">2</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">3</th>
@@ -100,10 +100,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        <label for="opini_a" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian A</label>
-                        <textarea name="opini_a" id="opini_a" placeholder="Berikan tanggapan pribadi Anda terkait Operasional & Produk" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
-                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -112,7 +108,7 @@
                         <table class="min-w-full border-collapse text-sm">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Aspek Bisnis</th>
+                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Opini Bisnis</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">1</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">2</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">3</th>
@@ -148,10 +144,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        <label for="opini_b" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian B</label>
-                        <textarea name="opini_b" id="opini_b" placeholder="Berikan tanggapan pribadi Anda terkait Pemasaran & Hubungan Pelanggan" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
-                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -160,7 +152,7 @@
                         <table class="min-w-full border-collapse text-sm">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Aspek Bisnis</th>
+                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Opini Bisnis</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">1</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">2</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">3</th>
@@ -190,10 +182,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        <label for="opini_c" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian C</label>
-                        <textarea name="opini_c" id="opini_c" placeholder="Berikan tanggapan pribadi Anda terkait Keuangan & Akses Modal" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
-                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -202,7 +190,7 @@
                         <table class="min-w-full border-collapse text-sm">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Aspek Bisnis</th>
+                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Opini Bisnis</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">1</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">2</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">3</th>
@@ -232,10 +220,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-4">
-                        <label for="opini_d" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian D</label>
-                        <textarea name="opini_d" id="opini_d" placeholder="Berikan tanggapan pribadi Anda terkait Teknologi dan Digitalisasi" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
-                    </div>
                 </section>
 
                 <section class="mt-8 border-t border-slate-200 pt-7">
@@ -244,7 +228,7 @@
                         <table class="min-w-full border-collapse text-sm">
                             <thead class="bg-slate-50 text-slate-700">
                                 <tr>
-                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Aspek Bisnis</th>
+                                    <th class="border-b border-slate-200 px-3 py-3 text-left font-bold">Opini Bisnis</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">1</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">2</th>
                                     <th class="w-14 border-b border-slate-200 px-3 py-3 text-center font-bold">3</th>
@@ -273,10 +257,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="mt-4">
-                        <label for="opini_e" class="mb-2 block text-sm font-semibold text-slate-700">Opini Pribadi - Bagian E</label>
-                        <textarea name="opini_e" id="opini_e" placeholder="Berikan tanggapan pribadi Anda terkait Tantangan & Kebutuhan UMKM" class="min-h-[120px] w-full resize-y rounded-lg border border-slate-300 px-3 py-3 text-sm text-slate-700 outline-none ring-indigo-200 placeholder:text-slate-400 focus:ring"></textarea>
                     </div>
                 </section>
 
