@@ -30,8 +30,14 @@ class User extends Authenticatable
         'kategori_usaha',
         'email',
         'password',
+        'role',
         'photo',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
 
     protected $hidden = [
         'password',

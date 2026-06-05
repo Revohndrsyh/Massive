@@ -1,6 +1,10 @@
 
 from flask import Flask, request, jsonify
+import logging
 import numpy as np
+import os
+import sys
+import time
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.model_selection import cross_val_predict
 import warnings
@@ -14,6 +18,15 @@ from pipeline_a_likert import (
 from pipeline_b_nlp import analyze_topics
 
 app = Flask(__name__)
+
+LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
+    format='%(asctime)s %(levelname)s [%(name)s] %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)],
+    force=True,
+)
+logger = logging.getLogger('massive.ml_service')
 
 # UNIVERSAL METRIC CAP — Safety net untuk semua metrik
 METRIC_MAX = 0.95   # Batas atas semua metrik — nilai di atas ini = indikasi overfitting
@@ -36,11 +49,12 @@ def cap_all_metrics(metrics: dict) -> dict:
 
 
 # Bootstrap: train models on startup
-print("=" * 60)
-print("MASSIVE ML Service — Initializing...")
-print("=" * 60)
+logger.info("=" * 60)
+logger.info("MASSIVE ML Service — Initializing...")
+logger.info("=" * 60)
+startup_started_at = time.perf_counter()
 
-print("[Pipeline A] Generating training data...")
+logger.info("[Pipeline A] Generating training data...")
 training_data = generate_training_data(300)
 
 # ── BACKWARD COMPATIBILITY ──
@@ -48,35 +62,35 @@ training_data = generate_training_data(300)
 # Versi lama hanya return X — fallback ke K-Means labels (circular)
 if isinstance(training_data, tuple) and len(training_data) == 2:
     X_raw, y_independent = training_data
-    print(f"  ✓ Menggunakan rule-based labels (versi baru) — {len(y_independent)} samples")
+    logger.info(f"  ✓ Menggunakan rule-based labels (versi baru) — {len(y_independent)} samples")
     use_independent_labels = True
 else:
     X_raw = training_data
     y_independent = None
     use_independent_labels = False
-    print("  ⚠ pipeline_a_likert.py versi LAMA terdeteksi — labels akan dari K-Means (circular)")
-    print("    → Disarankan update pipeline_a_likert.py untuk eval yang valid")
+    logger.info("  ⚠ pipeline_a_likert.py versi LAMA terdeteksi — labels akan dari K-Means (circular)")
+    logger.info("    → Disarankan update pipeline_a_likert.py untuk eval yang valid")
 
 X_scaled, scaler = preprocess_likert(X_raw)
 
-print("[Pipeline A] Finding optimal K untuk K-Means visualization...")
+logger.info("[Pipeline A] Finding optimal K untuk K-Means visualization...")
 optimal_k, sil_scores = find_optimal_k(X_scaled)
-print(f"  Optimal K = {optimal_k}, Silhouette scores = {sil_scores}")
+logger.info(f"  Optimal K = {optimal_k}, Silhouette scores = {sil_scores}")
 
-print("[Pipeline A] Running K-Means clustering (untuk visualization saja)...")
+logger.info("[Pipeline A] Running K-Means clustering (untuk visualization saja)...")
 labels_kmeans, cluster_names, km_model = cluster_likert(X_scaled, optimal_k)
-print(f"  Cluster names = {cluster_names}")
+logger.info(f"  Cluster names = {cluster_names}")
 
-print("[Pipeline A] Training ML models (LogReg, XGBoost, DecisionTree)...")
+logger.info("[Pipeline A] Training ML models (LogReg, XGBoost, DecisionTree)...")
 # Pakai independent labels kalau tersedia (versi baru), fallback ke K-Means kalau tidak
 labels_for_training = y_independent if use_independent_labels else labels_kmeans
 ml_result = train_ml_models(X_scaled, labels_for_training)
-print(f"  Best model: {ml_result['best_name']}")
-print(f"  All scores: {ml_result['all_scores']}")
+logger.info(f"  Best model: {ml_result['best_name']}")
+logger.info(f"  All scores: {ml_result['all_scores']}")
 
 
 # Compute detailed model metrics (dengan UNIVERSAL CAPPING)
-print(f"[Pipeline A] Evaluating model metrics (ALL capped ≤ {METRIC_MAX})...")
+logger.info(f"[Pipeline A] Evaluating model metrics (ALL capped ≤ {METRIC_MAX})...")
 model_comparison = {}
 for name, model in ml_result['all_models'].items():
     try:
@@ -112,6 +126,7 @@ for name, model in ml_result['all_models'].items():
         model_comparison[name] = cap_all_metrics(raw_metrics)
 
     except Exception as e:
+        logger.exception("  Metric computation failed for model %s; using fallback score", name)
         # Fallback kalau metric computation gagal
         base_score = ml_result['all_scores'].get(name, 0.82)
         model_comparison[name] = cap_all_metrics({
@@ -137,27 +152,28 @@ best_model_name    = PRIMARY_MODEL_NAME
 ml_result['best_name']  = best_model_name
 ml_result['best_model'] = ml_result['all_models'][best_model_name]
 
-print(f"\n{'=' * 60}")
-print(f"PRIMARY MODEL (FIXED): {best_model_name}")
-print(f"Kriteria pemilihan: kemudahan + kecepatan + interpretability")
-print(f"Model comparison (SEMUA metrik capped ≤ {METRIC_MAX}):")
+logger.info(f"\n{'=' * 60}")
+logger.info(f"PRIMARY MODEL (FIXED): {best_model_name}")
+logger.info(f"Kriteria pemilihan: kemudahan + kecepatan + interpretability")
+logger.info(f"Model comparison (SEMUA metrik capped ≤ {METRIC_MAX}):")
 for m, s in model_comparison.items():
     t = s.get('training_time', 0)
     flag = '⭐ PRIMARY' if m == best_model_name else '  comparison'
-    print(f"  {flag} {m}: F1={s['f1']}, Akurasi={s['akurasi']}, train_time={t}s")
+    logger.info(f"  {flag} {m}: F1={s['f1']}, Akurasi={s['akurasi']}, train_time={t}s")
 
 if detailed_scores:
-    print(f"\nTrain vs Test gap (indikator overfitting):")
+    logger.info(f"\nTrain vs Test gap (indikator overfitting):")
     for name, ds in detailed_scores.items():
         train_f1 = ds.get('train_f1', 0)
         test_f1  = ds.get('test_f1', 0)
         gap      = ds.get('gap_f1', 0)
         flag = '⚠ OVERFITTING' if ds.get('overfitting') else '✓ ok'
-        print(f"  {name}: train_F1={train_f1}, test_F1={test_f1}, gap={gap} {flag}")
+        logger.info(f"  {name}: train_F1={train_f1}, test_F1={test_f1}, gap={gap} {flag}")
         if ds.get('overfitting'):
             overfitting_warnings.append(name)
 
-print(f"{'=' * 60}\n")
+logger.info(f"{'=' * 60}\n")
+logger.info("Startup completed in %.2fs", time.perf_counter() - startup_started_at)
 
 # API Endpoints
 
@@ -168,12 +184,20 @@ def predict():
     Runs Pipeline A (Likert) and Pipeline B (NLP) in parallel.
     """
     try:
+        request_started_at = time.perf_counter()
         data = request.json
         user_id = data.get('user_id', 0)
         jawaban = data.get('jawaban', {})
         opini = data.get('opini', {})
+        logger.info(
+            "Predict request started user_id=%s jawaban_items=%s opini_items=%s",
+            user_id,
+            len(jawaban),
+            len(opini),
+        )
 
         # ── Pipeline A: Likert-based classification ─────────
+        pipeline_a_started_at = time.perf_counter()
         result_a = predict_single(
             data_row=jawaban,
             scaler=scaler,
@@ -181,6 +205,7 @@ def predict():
             best_ml_model=ml_result['best_model'],
             cluster_names=cluster_names,
         )
+        logger.info("Pipeline A completed in %.3fs", time.perf_counter() - pipeline_a_started_at)
 
         # Cap confidence juga ≤ METRIC_MAX (sebelumnya bisa 1.0)
         result_a['confidence'] = cap_metric(result_a.get('confidence', 0.5))
@@ -188,6 +213,7 @@ def predict():
         # ── Pipeline B: NLP Text analysis ───────────────────
         result_b = {'topics': {}, 'edges': []}
         if opini:
+            pipeline_b_started_at = time.perf_counter()
             opini_data = [
                 {
                     'item_key': key,
@@ -197,6 +223,9 @@ def predict():
                 for key, text in opini.items()
             ]
             result_b = analyze_topics(opini_data)
+            logger.info("Pipeline B completed in %.3fs", time.perf_counter() - pipeline_b_started_at)
+        else:
+            logger.info("Pipeline B skipped because opini is empty")
 
         # ── Integrated result per aspect ────────────────────
         integrated = {}
@@ -226,7 +255,7 @@ def predict():
                 },
             }
 
-        return jsonify({
+        response = jsonify({
             'user_id':             user_id,
             'model_terbaik':       best_model_name,
             'sentimen':            result_a['sentimen'],
@@ -246,15 +275,17 @@ def predict():
             },
             'integrated': integrated,
         })
+        logger.info("Predict request completed user_id=%s duration=%.3fs", user_id, time.perf_counter() - request_started_at)
+        return response
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.exception("Predict request failed")
         return jsonify({'error': str(e)}), 500
 
 
 @app.route('/health', methods=['GET'])
 def health():
+    logger.info("Health check requested")
     return jsonify({
         'status':                  'ok',
         'best_model':              best_model_name,

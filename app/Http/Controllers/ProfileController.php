@@ -19,20 +19,31 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'nama_usaha' => 'required|string|max:200',
-            'kategori_usaha' => 'required|string|in:' . implode(',', User::KATEGORI_USAHA),
             'email' => 'required|email|unique:users,email,' . $user->id,
-        ], [
+        ];
+
+        if (! $user->isAdmin()) {
+            $rules += [
+                'phone' => 'nullable|string|max:20',
+                'nama_usaha' => 'required|string|max:200',
+                'kategori_usaha' => 'required|string|in:' . implode(',', User::KATEGORI_USAHA),
+            ];
+        }
+
+        $request->validate($rules, [
             'nama_usaha.required' => 'Nama usaha wajib diisi.',
             'nama_usaha.max' => 'Nama usaha maksimal 200 karakter.',
             'kategori_usaha.required' => 'Kategori usaha wajib dipilih.',
             'kategori_usaha.in' => 'Kategori usaha tidak valid.',
         ]);
 
-        $user->update($request->only('name', 'phone', 'nama_usaha', 'kategori_usaha', 'email'));
+        $fields = $user->isAdmin()
+            ? ['name', 'email']
+            : ['name', 'phone', 'nama_usaha', 'kategori_usaha', 'email'];
+
+        $user->update($request->only($fields));
 
         return back()->with('success', 'Profil berhasil diperbarui.');
     }

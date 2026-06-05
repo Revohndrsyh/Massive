@@ -34,11 +34,15 @@
                 {{-- KANAN: Desktop Menu --}}
                 <div class="hidden lg:flex items-center gap-1">
                     @auth
-                    <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('dashboard') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Dashboard</a>
-                    <a href="{{ route('kuesioner') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('kuesioner') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Kuesioner</a>
-                    <a href="{{ route('modul') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('modul*') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Modul</a>
+                    @if(auth()->user()?->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('admin.*') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Admin</a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('dashboard') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Dashboard</a>
+                        <a href="{{ route('kuesioner') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('kuesioner') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Kuesioner</a>
+                        <a href="{{ route('modul') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('modul*') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Modul</a>
+                    @endif
                     <a href="{{ route('profile') }}" class="px-3 py-2 rounded-lg text-sm font-medium transition-all min-h-[40px] flex items-center {{ request()->routeIs('profile') ? 'text-white bg-white/15' : 'text-white/80 hover:text-white hover:bg-white/10' }}">Profile</a>
-                    @if(auth()->user()->nama_usaha)
+                    @if(!auth()->user()?->isAdmin() && auth()->user()->nama_usaha)
                     <span class="hidden xl:flex items-center text-xs text-white/50 px-2 border-l border-white/10 ml-1">
                         {{ Str::limit(auth()->user()->nama_usaha, 20) }}
                     </span>
@@ -63,9 +67,13 @@
         {{-- Mobile Dropdown --}}
         <div id="mobile-menu" class="lg:hidden hidden bg-[#1e2d4a] border-t border-white/10 px-4 py-3 space-y-1">
             @auth
-            <a href="{{ route('dashboard') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('dashboard') ? 'bg-white/15 text-white' : '' }}">Dashboard</a>
-            <a href="{{ route('kuesioner') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('kuesioner') ? 'bg-white/15 text-white' : '' }}">Kuesioner</a>
-            <a href="{{ route('modul') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('modul*') ? 'bg-white/15 text-white' : '' }}">Modul</a>
+            @if(auth()->user()?->isAdmin())
+                <a href="{{ route('admin.dashboard') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('admin.*') ? 'bg-white/15 text-white' : '' }}">Admin</a>
+            @else
+                <a href="{{ route('dashboard') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('dashboard') ? 'bg-white/15 text-white' : '' }}">Dashboard</a>
+                <a href="{{ route('kuesioner') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('kuesioner') ? 'bg-white/15 text-white' : '' }}">Kuesioner</a>
+                <a href="{{ route('modul') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('modul*') ? 'bg-white/15 text-white' : '' }}">Modul</a>
+            @endif
             <a href="{{ route('profile') }}" class="block px-3 py-3 rounded-lg text-sm text-white/80 hover:text-white hover:bg-white/10 min-h-[44px] flex items-center {{ request()->routeIs('profile') ? 'bg-white/15 text-white' : '' }}">Profile</a>
             <hr class="border-white/10 my-2">
             <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="block w-full text-left px-3 py-3 rounded-lg text-sm text-white/60 hover:text-white/90 hover:bg-white/10 min-h-[44px]">Logout</button></form>

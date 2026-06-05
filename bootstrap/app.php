@@ -9,13 +9,16 @@ use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+        ]);
     })
     ->booting(function () {
         RateLimiter::for('login', function (Request $request) {
@@ -33,18 +36,17 @@ return Application::configure(basePath: dirname(__DIR__))
                 return Limit::none();
             }
 
-            return Limit::perHour(3)
+            return Limit::perHour(10)
                 ->by(auth()->id() ?? $request->ip())
                 ->response(function () {
                     return back()->withErrors([
                         'kuesioner' => 'Anda sudah menyelesaikan kuesioner 3 kali dalam 1 jam terakhir. Silakan coba lagi nanti.',
                     ]);
+                });
         });
-});
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (\Illuminate\Session\TokenMismatchException $e, $request) {
             return redirect()->back()->withInput()->withErrors(['email' => 'Sesi telah berakhir. Silakan coba lagi.']);
         });
     })->create();
-

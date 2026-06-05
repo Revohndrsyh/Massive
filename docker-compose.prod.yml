@@ -1,0 +1,43 @@
+services:
+  app:
+    image: ${APP_IMAGE:-massive-app:prod}
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    volumes:
+      - app-storage:/var/www/html/storage
+    cpus: "0.75"
+    mem_limit: 512m
+    memswap_limit: 768m
+
+  web:
+    image: ${WEB_IMAGE:-massive-web:prod}
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    cpus: "0.25"
+    mem_limit: 128m
+    memswap_limit: 192m
+
+  queue:
+    image: ${APP_IMAGE:-massive-app:prod}
+    env_file:
+      - .env.production
+    cpus: "0.35"
+    mem_limit: 256m
+    memswap_limit: 384m
+
+  ml-service:
+    image: ${ML_IMAGE:-massive-ml-service:prod}
+    build:
+      context: ./ml_service
+    ports: []
+    cpus: "1.0"
+    mem_limit: 900m
+    memswap_limit: 1280m

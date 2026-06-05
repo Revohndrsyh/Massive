@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\KuesionerResponse;
 use App\Models\MlResult;
+use App\Models\SusResponse;
 
 class DashboardController extends Controller
 {
@@ -62,17 +63,10 @@ class DashboardController extends Controller
 
         $hasFilledSUS = false;
         $susSkor = null;
-        $csvPath = storage_path('app/sus_responses.csv');
-        if (file_exists($csvPath)) {
-            $file = fopen($csvPath, 'r');
-            fgetcsv($file, 0, ';');
-            while (($row = fgetcsv($file, 0, ';')) !== false) {
-                if (isset($row[0]) && (int)$row[0] === $user->id) {
-                    $hasFilledSUS = true;
-                    $susSkor = (float)($row[13] ?? 0);
-                }
-            }
-            fclose($file);
+        $latestSusResponse = SusResponse::where('user_id', $user->id)->latest()->first();
+        if ($latestSusResponse) {
+            $hasFilledSUS = true;
+            $susSkor = (float) $latestSusResponse->skor_sus;
         }
 
         return view('dashboard', compact(

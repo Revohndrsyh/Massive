@@ -12,6 +12,8 @@ return [
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
     'cipher' => 'AES-256-CBC',
     'key' => env('APP_KEY'),
+
+    'flask_ml_url' => env('FLASK_ML_URL', 'http://localhost:5000'),
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))

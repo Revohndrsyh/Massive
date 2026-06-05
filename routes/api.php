@@ -136,10 +136,20 @@ Route::get('/transcript/{slug}', function ($slug) {
     }
 });
 
-// SUS (System Usability Scale) Submit — CSV-based
+// SUS (System Usability Scale) Submit
 Route::post('/sus/submit', function (Request $request) {
     $request->validate([
         'answers' => 'required|array',
+        'answers.sus_1' => 'required|integer|min:1|max:5',
+        'answers.sus_2' => 'required|integer|min:1|max:5',
+        'answers.sus_3' => 'required|integer|min:1|max:5',
+        'answers.sus_4' => 'required|integer|min:1|max:5',
+        'answers.sus_5' => 'required|integer|min:1|max:5',
+        'answers.sus_6' => 'required|integer|min:1|max:5',
+        'answers.sus_7' => 'required|integer|min:1|max:5',
+        'answers.sus_8' => 'required|integer|min:1|max:5',
+        'answers.sus_9' => 'required|integer|min:1|max:5',
+        'answers.sus_10' => 'required|integer|min:1|max:5',
         'skor_sus' => 'required|numeric|min:0|max:100',
     ]);
 
@@ -154,71 +164,31 @@ Route::post('/sus/submit', function (Request $request) {
         return response()->json(['error' => 'User not authenticated'], 401);
     }
 
-    // Get user info
-    $user = \App\Models\User::find($userId);
-    $userName = $user->name ?? 'User #' . $userId;
-    $userEmail = $user->email ?? '-';
-
     $answers = $request->input('answers');
     $skorSus = $request->input('skor_sus');
 
-    // Grade calculation
-    $grade = $skorSus >= 85 ? 'Excellent' : ($skorSus >= 72 ? 'Good' : ($skorSus >= 52 ? 'OK' : 'Poor'));
-    $gradeLabel = $skorSus >= 85 ? 'Sangat Baik' : ($skorSus >= 72 ? 'Baik' : ($skorSus >= 52 ? 'Cukup' : 'Perlu Perbaikan'));
-
-    // Write to CSV
-    $csvPath = storage_path('app/sus_responses.csv');
-    $isNew = !file_exists($csvPath);
-
-    $file = fopen($csvPath, 'a');
-    if ($isNew) {
-        // BOM + header
-        fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
-        fputcsv($file, [
-            'user_id', 'nama', 'email',
-            'sus_1', 'sus_2', 'sus_3', 'sus_4', 'sus_5',
-            'sus_6', 'sus_7', 'sus_8', 'sus_9', 'sus_10',
-            'skor_sus', 'grade', 'keterangan', 'tanggal'
-        ], ';');
-    }
-
-    $row = [$userId, $userName, $userEmail];
+    $payload = [
+        'user_id' => $userId,
+        'skor_sus' => $skorSus,
+    ];
     for ($i = 1; $i <= 10; $i++) {
-        $row[] = $answers["sus_{$i}"] ?? '';
+        $payload["sus_{$i}"] = $answers["sus_{$i}"];
     }
-    $row[] = number_format($skorSus, 1, '.', '');
-    $row[] = $grade;
-    $row[] = $gradeLabel;
-    $row[] = now()->timezone('Asia/Jakarta')->format('d/m/Y H:i:s');
 
-    fputcsv($file, $row, ';');
-    fclose($file);
+    $susResponse = SusResponse::create($payload);
 
     return response()->json([
         'success' => true,
-        'skor_sus' => $skorSus,
-        'grade' => $grade,
-        'grade_label' => $gradeLabel,
+        'id' => $susResponse->id,
+        'skor_sus' => (float) $susResponse->skor_sus,
+        'grade' => $susResponse->grade,
+        'grade_label' => $susResponse->grade_label,
     ]);
 });
 
-// SUS Result — read from CSV
+// SUS Result
 Route::get('/sus/result/{user_id}', function ($userId) {
-    $csvPath = storage_path('app/sus_responses.csv');
-    if (!file_exists($csvPath)) {
-        return response()->json(['has_data' => false]);
-    }
-
-    $file = fopen($csvPath, 'r');
-    $header = fgetcsv($file, 0, ';'); // skip header (may include BOM)
-    $latest = null;
-
-    while (($row = fgetcsv($file, 0, ';')) !== false) {
-        if (isset($row[0]) && (int)$row[0] === (int)$userId) {
-            $latest = $row;
-        }
-    }
-    fclose($file);
+    $latest = SusResponse::where('user_id', $userId)->latest()->first();
 
     if (!$latest) {
         return response()->json(['has_data' => false]);
@@ -226,9 +196,9 @@ Route::get('/sus/result/{user_id}', function ($userId) {
 
     return response()->json([
         'has_data' => true,
-        'skor_sus' => (float)($latest[13] ?? 0),
-        'grade' => $latest[14] ?? '',
-        'grade_label' => $latest[15] ?? '',
-        'created_at' => $latest[16] ?? '',
+        'skor_sus' => (float) $latest->skor_sus,
+        'grade' => $latest->grade,
+        'grade_label' => $latest->grade_label,
+        'created_at' => $latest->created_at?->timezone('Asia/Jakarta')->format('d/m/Y H:i:s'),
     ]);
 });
