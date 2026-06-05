@@ -7,8 +7,8 @@ services:
     env_file:
       - .env.docker
     depends_on:
-      # db:
-      #   condition: service_healthy
+      db:
+        condition: service_healthy
       ml-service:
         condition: service_started
     volumes:
@@ -54,8 +54,8 @@ services:
       - .env.docker
     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
     depends_on:
-      # db:
-      #   condition: service_healthy
+      db:
+        condition: service_healthy
       app:
         condition: service_started
     volumes:
@@ -76,30 +76,30 @@ services:
     networks:
       - massive
 
-  # db:
-  #   image: mysql:8.4
-  #   env_file:
-  #     - .env.docker
-  #   ports:
-  #     - "3306:3306"
-  #   volumes:
-  #     - db-data:/var/lib/mysql
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD",
-  #         "mysqladmin",
-  #         "ping",
-  #         "-h",
-  #         "127.0.0.1",
-  #         "-uroot",
-  #         "-p$${MYSQL_ROOT_PASSWORD}",
-  #       ]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
-  #   networks:
-  #     - massive
+  db:
+    image: mysql:8.4
+    env_file:
+      - .env.docker
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "-uroot",
+          "-p$${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - massive
 
   ml-service:
     build:
@@ -116,7 +116,7 @@ services:
 
 volumes:
   app-storage:
-  # db-data:
+  db-data:
 
 networks:
   massive:
